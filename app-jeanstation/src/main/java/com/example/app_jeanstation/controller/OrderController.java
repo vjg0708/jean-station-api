@@ -2,14 +2,10 @@ package com.example.app_jeanstation.controller;
 
 import java.util.List;
 
+import com.example.app_jeanstation.DTO.OrderDTO;
+import com.example.app_jeanstation.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.app_jeanstation.model.Order;
 import com.example.app_jeanstation.service.Orderservice;
@@ -20,21 +16,28 @@ public class OrderController {
 
 	@Autowired
 	 Orderservice orderservice;
+	ProductServiceImp productservice;
 	
-	@GetMapping
-	public List<Order> getAllOrders()
+	@GetMapping("/allorders")
+	public List<OrderDTO> getAllOrders()
 	{
 		return orderservice.getallOrders();
 	}
 	
-	@PostMapping
-	public Order placeOrder(@RequestBody Order order) {
+	@PostMapping("/placeorder")
+	public Order placeOrder(@RequestBody OrderDTO order) {
 		return orderservice.placeOrder(order);
 	}
+
 	@PutMapping("/{id}/release")
 	public Order releaseorder(@PathVariable Long id)
 	{
 		return orderservice.releaseorder(id);
 	}
-	
+
+	@DeleteMapping("/{id}/deleteorder")
+	public Order deleteOrder(@PathVariable Long id)
+	{
+		return orderservice.deletefromcart(id);
+	}
 }
