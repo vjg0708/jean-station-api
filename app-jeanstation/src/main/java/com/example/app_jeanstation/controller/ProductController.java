@@ -1,5 +1,6 @@
 package com.example.app_jeanstation.controller;
 
+import com.example.app_jeanstation.DTO.ProductDTO;
 import com.example.app_jeanstation.model.Product;
 import com.example.app_jeanstation.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +15,63 @@ public class ProductController {
     @Autowired
     ProductServiceImp productService;
 
-    @GetMapping(value = "/displayProduct/{id}")
-    public Product viewProduct(@PathVariable Integer id){
+    @GetMapping("/getProduct/{id}")
+    public ProductDTO display(@PathVariable Long id){
 
         return productService.getProductById(id);
     }
 
-    @GetMapping("/displayAllProducts")
-    public List<Product> viewAllProducts(){
+    @GetMapping("/getAllProducts")
+    public List<ProductDTO> displayAll(){
 
         return productService.getAllProducts();
     }
 
-    @PostMapping("/createProduct")
-    public String addProduct(@RequestBody Product product){
+    @PostMapping("/addProduct")
+    public String create(@RequestBody ProductDTO productDTO){
 
-        return productService.addProduct(product);
+        return productService.addProduct(productDTO);
     }
 
-    @PostMapping("/createlistOfProducts")
-    public String addAllProducts(@RequestBody List<Product> products){
+    @PostMapping("/addAllProducts")
+    public String createAll(@RequestBody List<ProductDTO> productDTOS){
 
-        return productService.addAllProducts(products);
+        return productService.addAllProducts(productDTOS);
     }
 
-    @PutMapping("/updateProductById/{id}")
-    public String updateProduct(@PathVariable Integer id,
-                                @RequestBody Product product){
+    @PutMapping("/updateProduct/{id}")
+    public String update(@PathVariable Long id,
+                         @RequestBody ProductDTO productDTO){
 
-        return productService.updateProductById(id, product);
+        return productService.updateProductById(id, productDTO);
     }
 
     @PatchMapping("/updateProductName/{id}")
-    public Product changeProductName(@PathVariable Integer id,
-                                    @RequestBody String productName){
+    public ProductDTO updateName(@PathVariable Long id, @RequestBody ProductDTO product){
 
-        return productService.updateProductNameById(id, productName);
+        return productService.updateProductName(id, product.getProductName());
     }
 
     @PatchMapping("/updateProductPrice/{id}")
-    public Product changeProductPrice(@PathVariable Integer id,
-                                      @RequestBody Double productPrice){
+    public ProductDTO updatePrice(@PathVariable Long id, @RequestBody ProductDTO product){
 
-        return productService.updateProductPriceById(id, productPrice);
+        return productService.updateProductPrice(id, product.getProductPrice());
+    }
+
+    @PatchMapping("/updateProductStock/{id}")
+    public ProductDTO updateStock(@PathVariable Long id, @RequestBody ProductDTO product){
+
+        return productService.updateProductStock(id, product.getProductStock());
     }
 
     @DeleteMapping("/deleteProduct/{id}")
-    public String removeProductById(@PathVariable Integer id){
+    public String remove(@PathVariable Long id){
 
         return productService.deleteProductById(id);
     }
 
     @DeleteMapping("/deleteAllProducts")
-    public String removeAllProducts(){
+    public String removeAll(){
 
         return productService.deleteAllProducts();
     }

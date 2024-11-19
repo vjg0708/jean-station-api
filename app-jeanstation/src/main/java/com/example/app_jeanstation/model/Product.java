@@ -4,14 +4,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
-@Table(name = "ProductDetails")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@Table(name = "Product_Details")
 public class Product {
 
     @Id
     @Column(name = "Product_Id")
-    private Integer productId;
+    private  Long productId;
 
     @Column(name = "Product_Name")
     private String productName;
@@ -19,36 +26,9 @@ public class Product {
     @Column(name = "Product_Price")
     private Double productPrice;
 
-    public Product() {
-    }
+    @Column(name = "Product_Stock")
+    private  Integer productStock;
 
-    public Product(Integer productId, String productName, Double productPrice) {
-        this.productId = productId;
-        this.productName = productName;
-        this.productPrice = productPrice;
-    }
 
-    public Integer getProductId() {
-        return productId;
-    }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public Double getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(Double productPrice) {
-        this.productPrice = productPrice;
-    }
 }

@@ -1,113 +1,123 @@
 package com.example.app_jeanstation.service;
 
+import com.example.app_jeanstation.DTO.ProductDTO;
+import com.example.app_jeanstation.mapper.ProductMapper;
 import com.example.app_jeanstation.model.Product;
 import com.example.app_jeanstation.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImp implements IProductService{
+public class ProductServiceImp implements IProductService {
 
     @Autowired
     ProductRepository useRepository;
 
-    @Override
-    public Product getProductById(Integer id) {
 
-        return useRepository.getReferenceById(id);
+    @Override
+    public ProductDTO getProductById(Long id) {
+
+        Product getProduct = useRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product Not found"));
+        return ProductMapper.convertToDTO(getProduct);
     }
 
     @Override
-    public List<Product> getAllProducts() {
+    public List<ProductDTO> getAllProducts() {
 
-        return useRepository.findAll();
-    }
+        if (!(useRepository.count() > 0)) {
 
-    @Override
-    public String addProduct(Product product) {
-
-        if(useRepository.existsById(product.getProductId())){
-
-            return "Entity already exists, use valid request";
+            throw new RuntimeException("Entities are not available");
         }
-        useRepository.save(product);
-        return "Entity added successfully";
+        return useRepository.findAll().stream()
+                .map(ProductMapper::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public String addAllProducts(List<Product> products) {
+    public String addProduct(ProductDTO productDTO) {
 
-        useRepository.saveAll(products);
-        return "Entities added successfully";
-    }
-
-    @Override
-    public String updateProductById(Integer id, Product product) {
-
-        if (useRepository.existsById(id)){
-
-            Product updateProduct = useRepository.getReferenceById(id);
-            updateProduct.setProductName(product.getProductName());
-            updateProduct.setProductPrice(product.getProductPrice());
-
-            useRepository.save(updateProduct);
-            return "Entity updated Successfully";
+        if (useRepository.existsById(productDTO.getProductId())) {
+            return "Entity already exists";
         }
+        useRepository.save(ProductMapper.convertToEntity(productDTO));
+        return "Entity added";
 
-        return "Entity not exists";
     }
 
     @Override
-    public Product updateProductNameById(Integer id, String productName) {
+    public String addAllProducts(List<ProductDTO> productsDTO) {
 
-        if (useRepository.existsById(id)){
+        useRepository.saveAll(ProductMapper.convertToEntities(productsDTO));
+        return "Entities added";
+    }
 
-            Product updateProductName = useRepository.getReferenceById(id);
-            updateProductName.setProductName(productName);
+    @Override
+    public String updateProductById(Long id, ProductDTO productDTO) {
 
-            useRepository.save(updateProductName);
-            return useRepository.getReferenceById(id);
+        if (useRepository.existsById(id)) {
+            ProductDTO updateProductDTO = ProductMapper.convertToDTO(useRepository.findById(id).
+                    orElseThrow(() -> new RuntimeException("Entity not Exists")));
+            updateProductDTO.setProductName(productDTO.getProductName());
+            updateProductDTO.setProductPrice(productDTO.getProductPrice());
+            updateProductDTO.setProductStock(productDTO.getProductStock());
+
+            useRepository.save(ProductMapper.convertToEntity(updateProductDTO));
+            return "Entity updated";
         }
 
-        return null;
+        return "Entity not updated";
     }
 
     @Override
-    public Product updateProductPriceById(Integer id, Double productPrice) {
+    public ProductDTO updateProductName(Long id, String productName) {
 
-        if (useRepository.existsById(id)){
+        Product product = useRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found"));
 
-            Product updateProductPrice = useRepository.getReferenceById(id);
-            updateProductPrice.setProductPrice(productPrice);
+        product.setProductName(productName);
+        return ProductMapper.convertToDTO(useRepository.save(product));
+    }
 
-            useRepository.save(updateProductPrice);
-            return useRepository.getReferenceById(id);
-        }
-        return null;
+
+    @Override
+    public ProductDTO updateProductPrice(Long id, Double productPrice) {
+
+        Product product = useRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found"));
+
+        product.setProductPrice(productPrice);
+        return ProductMapper.convertToDTO(useRepository.save(product));
     }
 
     @Override
-    public String deleteProductById(Integer id) {
+    public ProductDTO updateProductStock(Long id, Integer productStock) {
 
-        useRepository.deleteById(id);
+        Product product = useRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found"));
 
-        if (useRepository.existsById(id)){
-            return "Entity not deleted";
+        product.setProductStock(productStock);
+        return ProductMapper.convertToDTO(useRepository.save(product));
+    }
+
+
+    @Override
+    public String deleteProductById(Long id) {
+
+        if (useRepository.existsById(id)) {
+            useRepository.deleteById(id);
+            return "Entity Deleted";
         }
-        return "Entity deleted successfully";
+        return "Entity not deleted";
     }
 
     @Override
     public String deleteAllProducts() {
 
         useRepository.deleteAll();
-        if (useRepository.count()>0){
-
-            return "Entities not deleted";
-        }
-
-        return "All Entities were removed";
+        return "All entities deleted";
     }
 }
