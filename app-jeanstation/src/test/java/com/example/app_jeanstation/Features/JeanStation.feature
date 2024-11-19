@@ -47,3 +47,8 @@ Feature: Product API Management
     Given Enter the releasing order request url
     And Enter the Order details
     And validate Release status
+
+
+  Scenario: Deleting the order
+    Given Enter the delete order request url
+    And Validate the order deletion

@@ -19,7 +19,6 @@ public class JeanStationSD {
 @Given("Enter the post request url")
 public void enter_the_post_request_url() {
     // Write code here that turns the phrase above into concrete actions
-
 	RestAssured.baseURI = baseURL;
 	request = RestAssured.given();
 }
@@ -86,7 +85,6 @@ public void validate_the_status_code() {
 @Given("Enter the put request url")
 public void enter_the_put_request_url() {
     // Write code here that turns the phrase above into concrete actions
-
 	request = RestAssured.given();
 }
 
@@ -128,7 +126,6 @@ public void patch_the_product_details() {
 @Given("Enter the delete request url")
 public void enter_the_delete_request_url() {
     // Write code here that turns the phrase above into concrete actions
-
 	request = RestAssured.given();
 }
 
@@ -150,28 +147,55 @@ public void enter_the_desired_product_details() {
     // Write code here that turns the phrase above into concrete actions
 	JSONObject object = new JSONObject();
 	object.put("productId",1);
+	request.contentType(ContentType.JSON).body(object.toJSONString());
+	response = request.post("/allorders");
 
 }
 
 @And("validate the Order Status")
 public void validate_the_order_status() {
     // Write code here that turns the phrase above into concrete actions
+	response.then()
+			.statusCode(200)
+			.body("status",equalTo("PLACED"));
 }
 
 @Given("Enter the releasing order request url")
 public void enter_the_releasing_order_request_url() {
     // Write code here that turns the phrase above into concrete actions
+	request = RestAssured.given();
+
 }
 
 @And("Enter the Order details")
 public void enter_the_order_details() {
     // Write code here that turns the phrase above into concrete actions
+	JSONObject object = new JSONObject();
+	object.put("orderId",1);
+	request.contentType("application/json").body(object.toJSONString());
+	response = request.put("/1/release");//Im assuming product ID is 1
 }
 
 @And("validate Release status")
 public void validate_release_status() {
     // Write code here that turns the phrase above into concrete actions
+	response.then()
+			.statusCode(200)
+			.body("status",equalTo("RELEASED"));
 }
+	@Given("Enter the delete order request url")
+	public void enter_the_delete_order_request_url() {
+		request = RestAssured.given();
+		response = request.put("/{id}/deleteorder");
+	}
+
+	@And("Validate the order deletion")
+	public void validate_the_order_deletion() {
+		response = request.delete("/1/deleteorder"); // Im assuming the product ID is 1
+		response.then()
+				.statusCode(200)
+				.body("message", equalTo("Order deleted successfully"));
+	}
 
 
 }

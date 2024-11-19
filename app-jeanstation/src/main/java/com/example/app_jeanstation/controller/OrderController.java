@@ -11,7 +11,7 @@ import com.example.app_jeanstation.model.Order;
 import com.example.app_jeanstation.service.Orderservice;
 
 @RestController
-@RequestMapping("api/order")
+@RequestMapping("api/jean-station")
 public class OrderController {
 
 	@Autowired
