@@ -1,6 +1,7 @@
 package com.example.app_jeanstation.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,11 +20,16 @@ public class Order {
 	
 	@ManyToOne
 	private Product product;
-	private int quantity;
+	private Integer quantity;
 	
-	@Enumerated
-	private String status;
 	
+	@Enumerated(EnumType.STRING)
+	private getOrderStatus status;
+
+	public enum getOrderStatus{
+		
+		PENDING ,PLACED , RELEASED
+	}
 	
 	public Long getOrder_ID() {
 		return order_ID;
@@ -37,17 +43,26 @@ public class Order {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public String getStatus() {
+	public getOrderStatus getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(getOrderStatus status) {
 		this.status = status;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
 	}
 	@Override
 	public String toString() {
 		return "Order [order_ID=" + order_ID + ", quantity=" + quantity + ", status=" + status + "]";
 	}
-	public Order(Long order_ID, int quantity, String status) {
+	public Order(Long order_ID, int quantity, getOrderStatus status) {
 		super();
 		this.order_ID = order_ID;
 		this.quantity = quantity;
