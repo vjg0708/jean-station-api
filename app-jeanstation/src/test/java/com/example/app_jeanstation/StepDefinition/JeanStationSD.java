@@ -5,8 +5,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.json.simple.JSONObject;
 
 public class JeanStationSD {
 	private String baseURL = "http://localhost/8080/api/jean-station";
@@ -17,14 +19,23 @@ public class JeanStationSD {
 @Given("Enter the post request url")
 public void enter_the_post_request_url() {
     // Write code here that turns the phrase above into concrete actions
-	String post_url = "/displayproduct/";
-	RestAssured.baseURI = baseURL+post_url;
+
+	RestAssured.baseURI = baseURL;
 	request = RestAssured.given();
 }
 
 @And("Enter the product details")
 public void enter_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
+	JSONObject object = new JSONObject();
+	object.put("productId",1001);
+	object.put("productName","Chair");
+	object.put("productPrice",300.0);
+	object.put("productStock", 2);
+
+	request.contentType(ContentType.JSON)
+			.body(object.toJSONString());
+
 
 }
 
@@ -56,8 +67,6 @@ public void validate_the_product_price() {
 @Given("Enter the get request url")
 public void enter_the_get_request_url() {
     // Write code here that turns the phrase above into concrete actions
-	String post_url = "/displayproduct/";
-	RestAssured.baseURI = baseURL+post_url;
 	request = RestAssured.given();
 }
 
@@ -77,14 +86,21 @@ public void validate_the_status_code() {
 @Given("Enter the put request url")
 public void enter_the_put_request_url() {
     // Write code here that turns the phrase above into concrete actions
-	String put_url = "/updateProductById/{id}";
-	RestAssured.baseURI = baseURL+put_url;
+
 	request = RestAssured.given();
 }
 
 @And("Enter Updated product details")
 public void enter_updated_product_details() {
     // Write code here that turns the phrase above into concrete actions
+	JSONObject object = new JSONObject();
+	object.put("productId",1001);
+	object.put("productName","Table");
+	object.put("productPrice",200.70);
+	object.put("productStock", 10);
+
+	request.contentType(ContentType.JSON)
+			.body(object.toJSONString());
 }
 
 @When("Put the product details")
@@ -96,22 +112,23 @@ public void put_the_product_details() {
 @Given("Enter the patch request url")
 public void enter_the_patch_request_url() {
     // Write code here that turns the phrase above into concrete actions
-	String patch_url = "/updateProductPrice/{id}";
-	RestAssured.baseURI = baseURL+patch_url;
 	request = RestAssured.given();
 }
 
 @When("Patch the product details")
 public void patch_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
+	JSONObject object = new JSONObject();
+	object.put("productStock", 15);
+
+	request.contentType(ContentType.JSON).body(object.toJSONString());
 	response = request.patch("http://localhost/8080/api/jean-station/updateProductPrice/{id}");
 }
 
 @Given("Enter the delete request url")
 public void enter_the_delete_request_url() {
     // Write code here that turns the phrase above into concrete actions
-	String delete_url = "/deleteAllProducts";
-	RestAssured.baseURI = baseURL+delete_url;
+
 	request = RestAssured.given();
 }
 
@@ -124,11 +141,16 @@ public void delete_the_product_details() {
 @Given("Enter the placing order request url")
 public void enter_the_placing_order_request_url() {
     // Write code here that turns the phrase above into concrete actions
+	request = RestAssured.given();
+
 }
 
 @And("Enter the desired product details")
 public void enter_the_desired_product_details() {
     // Write code here that turns the phrase above into concrete actions
+	JSONObject object = new JSONObject();
+	object.put("productId",1);
+
 }
 
 @And("validate the Order Status")
