@@ -15,7 +15,7 @@ public class ProductMapper {
     public static ProductDTO convertToDTO(Product product){
 
         return ProductDTO.builder()
-                .productId(product)
+                .productId(product.getProductId())
                 .productName(product.getProductName())
                 .productPrice(product.getProductPrice())
                 .productStock(product.getProductStock())
