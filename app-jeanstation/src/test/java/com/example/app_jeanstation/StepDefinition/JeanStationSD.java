@@ -27,10 +27,11 @@ public void enter_the_post_request_url() {
 public void enter_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
 	JSONObject object = new JSONObject();
-	object.put("productId",1001);
-	object.put("productName","Chair");
-	object.put("productPrice",300.0);
-	object.put("productStock", 2);
+	object.put("id",1);
+	object.put("productName","Powder");
+	object.put("productPrice",322.0);
+	object.put("productStock", 10);
+	object.put("productCode","PC101");
 
 	request.contentType(ContentType.JSON)
 			.body(object.toJSONString());
@@ -41,25 +42,23 @@ public void enter_the_product_details() {
 @When("Post the product details")
 public void post_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
-	response = request.post("/displayproduct/");
+	response = request.post("/addProduct");
  
 }
 
 @And("Validate the product name")
 public void validate_the_product_name() {
-    String productName = response.jsonPath().getString("name[0]");
-    if ("expectedProductName".equals(productName)) {
-        System.out.println("The Name is validated");
-    } else {
-        System.out.println("Validation error: Product name does not match");
-    }
+    String productName = response.jsonPath().getString("productName");
+	response.then().body("productName",equalTo("Powder")).
+			body("message",equalTo("Entity added"));
+
 }
 
 
 @And("Validate the product price")
 public void validate_the_product_price() {
     // Write code here that turns the phrase above into concrete actions
-	response.then().body("price", equalTo(200));
+	response.then().body("productPrice", equalTo(322.0));
 
 }
 
@@ -71,7 +70,7 @@ public void enter_the_get_request_url() {
 
 @When("Get the product details")
 public void get_the_product_details() {
-    response = request.get("/displayProduct");
+    response = request.get("/getAllProducts");
 }
 
 
@@ -92,10 +91,11 @@ public void enter_the_put_request_url() {
 public void enter_updated_product_details() {
     // Write code here that turns the phrase above into concrete actions
 	JSONObject object = new JSONObject();
-	object.put("productId",1001);
+	object.put("id",1);
 	object.put("productName","Table");
-	object.put("productPrice",200.70);
+	object.put("productPrice",3225.0);
 	object.put("productStock", 10);
+	object.put("productCode","PC101");
 
 	request.contentType(ContentType.JSON)
 			.body(object.toJSONString());
@@ -104,7 +104,7 @@ public void enter_updated_product_details() {
 @When("Put the product details")
 public void put_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
-	response = request.put("http://localhost/8080/api/jean-station/updateProductById");
+	response = request.put("/updateProduct/{id}");
 }
 
 @Given("Enter the patch request url")
@@ -117,10 +117,10 @@ public void enter_the_patch_request_url() {
 public void patch_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
 	JSONObject object = new JSONObject();
-	object.put("productStock", 15);
+	object.put("productStock", 50);
 
 	request.contentType(ContentType.JSON).body(object.toJSONString());
-	response = request.patch("http://localhost/8080/api/jean-station/updateProductPrice/{id}");
+	response = request.patch("/updateProductStock/{id}");
 }
 
 @Given("Enter the delete request url")
@@ -132,7 +132,7 @@ public void enter_the_delete_request_url() {
 @When("Delete the product details")
 public void delete_the_product_details() {
     // Write code here that turns the phrase above into concrete actions
-	response =request.delete("http://localhost/8080/api/jean-station/deleteAllProducts");
+	response =request.delete("/deleteAllProducts");
 }
 
 @Given("Enter the placing order request url")
@@ -146,9 +146,12 @@ public void enter_the_placing_order_request_url() {
 public void enter_the_desired_product_details() {
     // Write code here that turns the phrase above into concrete actions
 	JSONObject object = new JSONObject();
-	object.put("productId",1);
+	object.put("orderId",1);
+	object.put("productCode", "PC101");
+	object.put("quantity", 10);
+	object.put("status", "PENDING");
 	request.contentType(ContentType.JSON).body(object.toJSONString());
-	response = request.post("/allorders");
+	response = request.post("/placeorder");
 
 }
 
@@ -157,7 +160,9 @@ public void validate_the_order_status() {
     // Write code here that turns the phrase above into concrete actions
 	response.then()
 			.statusCode(200)
-			.body("status",equalTo("PLACED"));
+			.body("status",equalTo("PLACED"))
+			.body("productCode",equalTo("PC101"))
+			.body("quantity",equalTo(5));
 }
 
 @Given("Enter the releasing order request url")
@@ -173,7 +178,7 @@ public void enter_the_order_details() {
 	JSONObject object = new JSONObject();
 	object.put("orderId",1);
 	request.contentType("application/json").body(object.toJSONString());
-	response = request.put("/1/release");//Im assuming product ID is 1
+	response = request.put("/release/{id}");//Im assuming product ID is 1
 }
 
 @And("validate Release status")
@@ -186,15 +191,15 @@ public void validate_release_status() {
 	@Given("Enter the delete order request url")
 	public void enter_the_delete_order_request_url() {
 		request = RestAssured.given();
-		response = request.put("/{id}/deleteorder");
+
 	}
 
 	@And("Validate the order deletion")
 	public void validate_the_order_deletion() {
-		response = request.delete("/1/deleteorder"); // Im assuming the product ID is 1
+		response = request.delete("/deleteorder/{id}");
 		response.then()
 				.statusCode(200)
-				.body("message", equalTo("Order deleted successfully"));
+				.body("status",equalTo("REMOVED"));
 	}
 
 
