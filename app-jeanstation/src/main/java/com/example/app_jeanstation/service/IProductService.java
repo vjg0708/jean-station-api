@@ -22,6 +22,8 @@ public interface IProductService {
 
     public ProductDTO updateProductStock(Long id, Integer productStock);
 
+    public ProductDTO updateProductCode(Long id, String productCode);
+
     public String deleteProductById(Long id);
 
     public String deleteAllProducts();

@@ -65,6 +65,12 @@ public class ProductController {
         return productService.updateProductStock(id, product.getProductStock());
     }
 
+    @PatchMapping("/updateProductCode/{id}")
+    public ProductDTO updateProductCode(@PathVariable Long id, @RequestBody ProductDTO product){
+
+        return productService.updateProductCode(id, product.getProductCode());
+    }
+
     @DeleteMapping("/deleteProduct/{id}")
     public String remove(@PathVariable Long id){
 

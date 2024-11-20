@@ -1,43 +1,41 @@
 package com.example.app_jeanstation.controller;
 
-import java.util.List;
-
 import com.example.app_jeanstation.DTO.OrderDTO;
-import com.example.app_jeanstation.service.ProductServiceImp;
+import com.example.app_jeanstation.service.Orderservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.app_jeanstation.model.Order;
-import com.example.app_jeanstation.service.Orderservice;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/jean-station")
 public class OrderController {
 
 	@Autowired
-	 Orderservice orderservice;
-	ProductServiceImp productservice;
-	
+	Orderservice orderservice;
+
 	@GetMapping("/allorders")
-	public List<OrderDTO> getAllOrders()
-	{
-		return orderservice.getallOrders();
+	public List<OrderDTO> getAllOrders() {
+		return orderservice.getAllOrders();
 	}
-	
+
 	@PostMapping("/placeorder")
-	public Order placeOrder(@RequestBody OrderDTO order) {
-		return orderservice.placeOrder(order);
+	@Transactional  // Ensure this operation is transactional (order placement)
+	public Order placeOrder(@RequestBody OrderDTO orderDTO) {
+		// Validate product and quantity, ensure product exists in stock, etc.
+		return orderservice.placeOrder(orderDTO);
 	}
 
-	@PutMapping("/{id}/release")
-	public Order releaseorder(@PathVariable Long id)
-	{
-		return orderservice.releaseorder(id);
+	@PutMapping("/release/{id}")
+	public Order releaseOrder(@PathVariable Long id) {
+		return orderservice.releaseOrder(id);
 	}
 
-	@DeleteMapping("/{id}/deleteorder")
-	public Order deleteOrder(@PathVariable Long id)
-	{
-		return orderservice.deletefromcart(id);
+	@DeleteMapping("/deleteorder/{id}")
+	public Order deleteOrder(@PathVariable Long id) {
+		return orderservice.deleteFromCart(id);
 	}
 }

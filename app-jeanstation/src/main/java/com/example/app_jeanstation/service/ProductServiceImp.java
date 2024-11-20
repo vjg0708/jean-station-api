@@ -40,7 +40,7 @@ public class ProductServiceImp implements IProductService {
     @Override
     public String addProduct(ProductDTO productDTO) {
 
-        if (useRepository.existsById(productDTO.getProductId())) {
+        if (useRepository.existsById(productDTO.getId())) {
             return "Entity already exists";
         }
         useRepository.save(ProductMapper.convertToEntity(productDTO));
@@ -64,6 +64,7 @@ public class ProductServiceImp implements IProductService {
             updateProductDTO.setProductName(productDTO.getProductName());
             updateProductDTO.setProductPrice(productDTO.getProductPrice());
             updateProductDTO.setProductStock(productDTO.getProductStock());
+            updateProductDTO.setProductCode(productDTO.getProductCode());
 
             useRepository.save(ProductMapper.convertToEntity(updateProductDTO));
             return "Entity updated";
@@ -100,6 +101,16 @@ public class ProductServiceImp implements IProductService {
                 .orElseThrow(() -> new RuntimeException("Entity not found"));
 
         product.setProductStock(productStock);
+        return ProductMapper.convertToDTO(useRepository.save(product));
+    }
+
+    @Override
+    public ProductDTO updateProductCode(Long id, String productCode) {
+
+        Product product = useRepository.findById(id).
+                orElseThrow(() -> new RuntimeException("Entity not found"));
+        product.setProductCode(productCode);
+
         return ProductMapper.convertToDTO(useRepository.save(product));
     }
 

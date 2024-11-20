@@ -1,24 +1,22 @@
 package com.example.app_jeanstation.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
-@Table(name = "Product_Details")
+@Entity
+@Table(name="Product_Details")
 public class Product {
 
     @Id
-    @Column(name = "Product_Id")
-    private  Long productId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "Product_Name")
     private String productName;
@@ -27,8 +25,8 @@ public class Product {
     private Double productPrice;
 
     @Column(name = "Product_Stock")
-    private  Integer productStock;
+    private Integer productStock;
 
-
-
+    @Column(name = "Product_Code", unique = true)  // productCode as unique identifier
+    private String productCode;
 }

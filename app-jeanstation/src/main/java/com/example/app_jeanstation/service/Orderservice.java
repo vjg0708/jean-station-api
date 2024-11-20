@@ -1,60 +1,61 @@
 package com.example.app_jeanstation.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.example.app_jeanstation.DTO.OrderDTO;
-import com.example.app_jeanstation.DTO.ProductDTO;
 import com.example.app_jeanstation.mapper.OrderMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.app_jeanstation.model.Order;
 import com.example.app_jeanstation.model.Product;
-import com.example.app_jeanstation.repository.OrderRepo;
+import com.example.app_jeanstation.repository.OrderRepository;
 import com.example.app_jeanstation.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
 
 @Service
 public class Orderservice {
 
 	@Autowired
-	OrderRepo orderRepo;
-	ProductRepository productRepo;
-	
-	public List<OrderDTO> getallOrders()
-	{
-		return orderRepo.findAll().stream().map(OrderMapper::convertToDTO).collect(Collectors.toList());
-	}
-	
-	public Order placeOrder(OrderDTO order)
-	{
-		Product product=productRepo.findById(order.getProductId()).orElseThrow(() -> new RuntimeException("product not found"));
-		if(product.getProductStock()< order.getQuantity())
-		{
-			throw new RuntimeException( "Products are insufficient");
+	OrderRepository orderRepository;
+
+	@Autowired
+	ProductRepository productRepository;
+
+	@Transactional
+	public Order placeOrder(OrderDTO orderDTO) {
+		// Fetch the product using the productCode from the database
+		Product product = productRepository.findByProductCode(orderDTO.getProductCode())
+				.orElseThrow(() -> new RuntimeException("Product not found with code: " + orderDTO.getProductCode()));
+
+		// Check if enough stock is available
+		if (product.getProductStock() < orderDTO.getQuantity()) {
+			throw new RuntimeException("Not enough stock available for product: " + product.getProductName());
 		}
-		
-		product.setProductStock(product.getProductStock()-order.getQuantity());
-		productRepo.save(product);
-		order.setStatus(Order.getOrderStatus.PLACED.name());
-		
-		return orderRepo.save(OrderMapper.convertToEntity(order,product));
-	}
-	
-	public Order releaseorder(Long order_ID) 
-	{
-		Order order = orderRepo.findById(order_ID).orElseThrow(() -> new RuntimeException("Order not found") );
-		order.setStatus(Order.getOrderStatus.RELEASED);
-		return orderRepo.save(order);
+		product.setProductStock(product.getProductStock() - orderDTO.getQuantity());
+		productRepository.save(product);
+		Order order = OrderMapper.convertToEntity(orderDTO, product);
+		return orderRepository.save(order);
 	}
 
-	public Order deletefromcart(Long order_ID)
-	{
-		Order order = orderRepo.findById(order_ID).orElseThrow(() -> new RuntimeException("Order not found") );
-		Product product=productRepo.findById(order.getProduct().getProductId()).orElseThrow(()->new RuntimeException("Product Not found"));
+	public List<OrderDTO> getAllOrders() {
+		List<Order> orders = orderRepository.findAll();
+		return OrderMapper.convertToDTOs(orders);
+	}
+
+	public Order releaseOrder(Long id) {
+		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+		order.setStatus(Order.OrderStatus.RELEASED);
+
+		return order;
+	}
+
+	public Order deleteFromCart(Long id) {
+		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+		Product product = productRepository.findById(order.getProduct().getId())
+				.orElseThrow(() -> new RuntimeException("Product Not Found"));
 		product.setProductStock(product.getProductStock()+order.getQuantity());
-		productRepo.save(product);
-		orderRepo.deleteById(order_ID);
+		order.setProduct(productRepository.save(product));
+		orderRepository.delete(order);
 		return order;
 	}
 }

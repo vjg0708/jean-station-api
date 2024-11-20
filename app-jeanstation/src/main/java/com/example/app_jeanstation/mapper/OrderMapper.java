@@ -1,18 +1,11 @@
 package com.example.app_jeanstation.mapper;
 
 import com.example.app_jeanstation.DTO.OrderDTO;
-import com.example.app_jeanstation.DTO.ProductDTO;
 import com.example.app_jeanstation.model.Order;
 import com.example.app_jeanstation.model.Product;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-
-
-import com.example.app_jeanstation.DTO.OrderDTO;
-import com.example.app_jeanstation.model.Order;
-import com.example.app_jeanstation.model.Product;
 
 public class OrderMapper {
 
@@ -20,9 +13,9 @@ public class OrderMapper {
     public static OrderDTO convertToDTO(Order order) {
         return OrderDTO.builder()
                 .orderId(order.getOrder_ID())
-                .productId(order.getProduct().getProductId()) // Assuming Product has getProduct_ID()
+                .productCode(order.getProduct().getProductCode()) // Mapping productCode
                 .quantity(order.getQuantity())
-                .status(order.getStatus().name())
+                .status(order.getStatus())
                 .build();
     }
 
@@ -30,28 +23,26 @@ public class OrderMapper {
     public static Order convertToEntity(OrderDTO orderDTO, Product product) {
         return Order.builder()
                 .order_ID(orderDTO.getOrderId())
-                .product(product) // Pass the Product entity
+                .product(product) // Set the actual Product entity
                 .quantity(orderDTO.getQuantity())
-                .status(Order.getOrderStatus.valueOf(orderDTO.getStatus()))
+                .status(Order.OrderStatus.valueOf(orderDTO.getStatus().name())) // OrderStatus enum
                 .build();
     }
 
-    public static List<OrderDTO> convertToDTOs(List<Order> orders){
-
+    public static List<OrderDTO> convertToDTOs(List<Order> orders) {
         return orders.stream()
                 .map(OrderMapper::convertToDTO)
                 .collect(Collectors.toList());
-
     }
 
     public static List<Order> convertToEntities(List<OrderDTO> orderDTOs, List<Product> products) {
         return orderDTOs.stream()
                 .map(orderDTO -> {
                     Product product = products.stream()
-                            .filter(p -> p.getProductId().equals(orderDTO.getProductId()))
+                            .filter(p -> p.getProductCode().equals(orderDTO.getProductCode()))
                             .findFirst()
-                            .orElse(null); // Handle case where product is not found
-                    return convertToEntity(orderDTO, product); // Use the single DTO-to-entity method
+                            .orElse(null);
+                    return convertToEntity(orderDTO, product);
                 })
                 .collect(Collectors.toList());
     }

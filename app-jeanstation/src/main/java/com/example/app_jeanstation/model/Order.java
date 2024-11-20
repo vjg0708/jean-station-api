@@ -1,13 +1,6 @@
 package com.example.app_jeanstation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Data
@@ -21,27 +14,23 @@ import lombok.*;
 public class Order {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long order_ID;
-	
+
 	@ManyToOne
+	@JoinColumn(name = "productId", referencedColumnName = "id")
 	private Product product;
 
 	private Integer quantity;
 
 	@Enumerated(EnumType.STRING)
-	private getOrderStatus status;
-
-	public enum getOrderStatus
-	{
-		PENDING ,PLACED , RELEASED
-	}
-	
+	private OrderStatus status;
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "Order [order_ID=" + order_ID + ", quantity=" + quantity + ", status=" + status + "]";
 	}
 
+	public enum OrderStatus {
+		PENDING, PLACED, RELEASED
+	}
 }
