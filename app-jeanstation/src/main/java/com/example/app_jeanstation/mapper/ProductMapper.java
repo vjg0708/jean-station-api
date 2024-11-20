@@ -24,7 +24,7 @@ public class ProductMapper {
     }
 
     public static Product convertToEntity(ProductDTO productDTO){
-        System.out.println(productDTO.getId());
+
         return Product.builder()
                 .id(productDTO.getId())
                 .productName(productDTO.getProductName())

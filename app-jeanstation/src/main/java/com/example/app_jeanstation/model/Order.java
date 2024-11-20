@@ -31,6 +31,6 @@ public class Order {
 	}
 
 	public enum OrderStatus {
-		PENDING, PLACED, RELEASED
+		PENDING, PLACED, RELEASED,REMOVED
 	}
 }
