@@ -15,7 +15,7 @@ public class ProductMapper {
     public static ProductDTO convertToDTO(Product product){
 
         return ProductDTO.builder()
-                .productId(product.getProductId())
+                .id(product.getId())
                 .productName(product.getProductName())
                 .productPrice(product.getProductPrice())
                 .productStock(product.getProductStock())
@@ -24,9 +24,9 @@ public class ProductMapper {
     }
 
     public static Product convertToEntity(ProductDTO productDTO){
-
+        System.out.println(productDTO.getId());
         return Product.builder()
-                .productId(productDTO.getProductId())
+                .id(productDTO.getId())
                 .productName(productDTO.getProductName())
                 .productPrice(productDTO.getProductPrice())
                 .productStock(productDTO.getProductStock())

@@ -14,11 +14,10 @@ import lombok.*;
 public class Order {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long order_ID;
 
 	@ManyToOne
-	@JoinColumn(name = "productId", referencedColumnName = "Product_Id")
+	@JoinColumn(name = "productId", referencedColumnName = "id")
 	private Product product;
 
 	private Integer quantity;

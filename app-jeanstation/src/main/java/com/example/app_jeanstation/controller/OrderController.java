@@ -29,12 +29,12 @@ public class OrderController {
 		return orderservice.placeOrder(orderDTO);
 	}
 
-	@PutMapping("/{id}/release")
+	@PutMapping("/release/{id}")
 	public Order releaseOrder(@PathVariable Long id) {
 		return orderservice.releaseOrder(id);
 	}
 
-	@DeleteMapping("/{id}/deleteorder")
+	@DeleteMapping("/deleteorder/{id}")
 	public Order deleteOrder(@PathVariable Long id) {
 		return orderservice.deleteFromCart(id);
 	}

@@ -4,7 +4,7 @@ import com.example.app_jeanstation.DTO.OrderDTO;
 import com.example.app_jeanstation.mapper.OrderMapper;
 import com.example.app_jeanstation.model.Order;
 import com.example.app_jeanstation.model.Product;
-import com.example.app_jeanstation.repository.OrderRepo;
+import com.example.app_jeanstation.repository.OrderRepository;
 import com.example.app_jeanstation.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.List;
 public class Orderservice {
 
 	@Autowired
-	OrderRepo orderRepo;
+	OrderRepository orderRepository;
 
 	@Autowired
 	ProductRepository productRepository;
@@ -34,21 +34,28 @@ public class Orderservice {
 		product.setProductStock(product.getProductStock() - orderDTO.getQuantity());
 		productRepository.save(product);
 		Order order = OrderMapper.convertToEntity(orderDTO, product);
-		return orderRepo.save(order);
+		return orderRepository.save(order);
 	}
 
 	public List<OrderDTO> getAllOrders() {
-		List<Order> orders = orderRepo.findAll();
+		List<Order> orders = orderRepository.findAll();
 		return OrderMapper.convertToDTOs(orders);
 	}
 
 	public Order releaseOrder(Long id) {
-		return orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+		order.setStatus(Order.OrderStatus.RELEASED);
+
+		return order;
 	}
 
 	public Order deleteFromCart(Long id) {
-		Order order = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
-		orderRepo.delete(order);
+		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+		Product product = productRepository.findById(order.getProduct().getId())
+				.orElseThrow(() -> new RuntimeException("Product Not Found"));
+		product.setProductStock(product.getProductStock()+order.getQuantity());
+		order.setProduct(productRepository.save(product));
+		orderRepository.delete(order);
 		return order;
 	}
 }
