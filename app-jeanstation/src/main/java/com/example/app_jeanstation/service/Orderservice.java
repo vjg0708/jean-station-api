@@ -33,7 +33,9 @@ public class Orderservice {
 		}
 		product.setProductStock(product.getProductStock() - orderDTO.getQuantity());
 		productRepository.save(product);
+
 		Order order = OrderMapper.convertToEntity(orderDTO, product);
+		order.setStatus(Order.OrderStatus.PLACED);
 		return orderRepository.save(order);
 	}
 
@@ -53,8 +55,10 @@ public class Orderservice {
 		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
 		Product product = productRepository.findById(order.getProduct().getId())
 				.orElseThrow(() -> new RuntimeException("Product Not Found"));
+
 		product.setProductStock(product.getProductStock()+order.getQuantity());
 		order.setProduct(productRepository.save(product));
+		order.setStatus(Order.OrderStatus.REMOVED);
 		orderRepository.delete(order);
 		return order;
 	}
