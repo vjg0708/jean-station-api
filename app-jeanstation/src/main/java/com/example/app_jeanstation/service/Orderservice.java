@@ -22,7 +22,7 @@ public class Orderservice {
 	ProductRepository productRepository;
 
 	@Transactional
-	public Order placeOrder(OrderDTO orderDTO) {
+	public String placeOrder(OrderDTO orderDTO) {
 		// Fetch the product using the productCode from the database
 		Product product = productRepository.findByProductCode(orderDTO.getProductCode())
 				.orElseThrow(() -> new RuntimeException("Product not found with code: " + orderDTO.getProductCode()));
@@ -34,7 +34,7 @@ public class Orderservice {
 		product.setProductStock(product.getProductStock() - orderDTO.getQuantity());
 		productRepository.save(product);
 		Order order = OrderMapper.convertToEntity(orderDTO, product);
-		return orderRepo.save(order);
+		return "Order having"+ orderDTO.getProductCode() +" of product " + product.getProductName() + " placed";
 	}
 
 	public List<OrderDTO> getAllOrders() {
@@ -46,9 +46,9 @@ public class Orderservice {
 		return orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
 	}
 
-	public Order deleteFromCart(Long id) {
+	public String deleteFromCart(Long id) {
 		Order order = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
 		orderRepo.delete(order);
-		return order;
+		return "Order having id " + id + " deleted";
 	}
 }

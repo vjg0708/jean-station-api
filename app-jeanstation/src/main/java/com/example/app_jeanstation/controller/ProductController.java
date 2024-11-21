@@ -1,10 +1,10 @@
 package com.example.app_jeanstation.controller;
 
 import com.example.app_jeanstation.DTO.ProductDTO;
-import com.example.app_jeanstation.model.Product;
-
 import com.example.app_jeanstation.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,66 +16,39 @@ public class ProductController {
     @Autowired
     ProductServiceImp productService;
 
+    @Secured("ROLE_USER")
     @GetMapping("/getProduct/{id}")
-    public ProductDTO display(@PathVariable Long id){
-
+    public ProductDTO display(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
-    @GetMapping("/getAllProducts")
-    public List<ProductDTO> displayAll(){
+    @Secured("ROLE_USER")
+    @PostMapping("/addProducts")
+    public String createAll(@RequestBody List<ProductDTO> productsDTO) {
+        return productService.addAllProducts(productsDTO);
+    }
 
+    @Secured( "ROLE_USER")
+    @GetMapping("/getAllProducts")
+    public List<ProductDTO> displayAll() {
         return productService.getAllProducts();
     }
 
+    @Secured("ROLE_USER")
     @PostMapping("/addProduct")
-    public String create(@RequestBody ProductDTO productDTO){
-
+    public String create(@RequestBody ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
 
-    @PostMapping("/addAllProducts")
-    public String createAll(@RequestBody List<ProductDTO> productDTOS){
-
-        return productService.addAllProducts(productDTOS);
-    }
-
+    @Secured("ROLE_USER")
     @PutMapping("/updateProduct/{id}")
-    public String update(@PathVariable Long id,
-                         @RequestBody ProductDTO productDTO){
-
+    public String update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
         return productService.updateProductById(id, productDTO);
     }
 
-    @PatchMapping("/updateProductName/{id}")
-    public ProductDTO updateName(@PathVariable Long id, @RequestBody ProductDTO product){
-
-        return productService.updateProductName(id, product.getProductName());
-    }
-
-    @PatchMapping("/updateProductPrice/{id}")
-    public ProductDTO updatePrice(@PathVariable Long id, @RequestBody ProductDTO product){
-
-        return productService.updateProductPrice(id, product.getProductPrice());
-    }
-
-    @PatchMapping("/updateProductStock/{id}")
-    public ProductDTO updateStock(@PathVariable Long id, @RequestBody ProductDTO product){
-
-        return productService.updateProductStock(id, product.getProductStock());
-    }
-
+    @Secured("ROLE_USER")
     @DeleteMapping("/deleteProduct/{id}")
-    public String remove(@PathVariable Long id){
-
+    public String remove(@PathVariable Long id) {
         return productService.deleteProductById(id);
     }
-
-    @DeleteMapping("/deleteAllProducts")
-    public String removeAll(){
-
-        return productService.deleteAllProducts();
-    }
-
-    
 }
