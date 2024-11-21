@@ -11,13 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImp implements IProductService {
+public class ProductService {
 
     @Autowired
     ProductRepository useRepository;
 
 
-    @Override
     public ProductDTO getProductById(Long id) {
 
         Product getProduct = useRepository.findById(id)
@@ -25,7 +24,7 @@ public class ProductServiceImp implements IProductService {
         return ProductMapper.convertToDTO(getProduct);
     }
 
-    @Override
+
     public List<ProductDTO> getAllProducts() {
 
         if (!(useRepository.count() > 0)) {
@@ -37,26 +36,30 @@ public class ProductServiceImp implements IProductService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public String addProduct(ProductDTO productDTO) {
 
-        if (useRepository.existsById(productDTO.getId())) {
-            return "Entity already exists";
+    public ProductDTO addProduct(ProductDTO productDTO) {
+
+        if(useRepository.existsById(productDTO.getId())){
+
+            throw  new RuntimeException("Product Already exists");
         }
-        useRepository.save(ProductMapper.convertToEntity(productDTO));
-        return "Entity added";
+        Product product = useRepository.save(ProductMapper.convertToEntity(productDTO));
+        return ProductMapper.convertToDTO(product);
+    }
+
+
+    public List<ProductDTO> addAllProducts(List<ProductDTO> productsDTO) {
+
+
+        return ProductMapper
+                .convertToDTOs(useRepository
+                        .saveAll(ProductMapper
+                        .convertToEntities(productsDTO)));
 
     }
 
-    @Override
-    public String addAllProducts(List<ProductDTO> productsDTO) {
 
-        useRepository.saveAll(ProductMapper.convertToEntities(productsDTO));
-        return "Entities added";
-    }
-
-    @Override
-    public String updateProductById(Long id, ProductDTO productDTO) {
+    public ProductDTO updateProductById(Long id, ProductDTO productDTO) {
 
         if (useRepository.existsById(id)) {
             ProductDTO updateProductDTO = ProductMapper.convertToDTO(useRepository.findById(id).
@@ -66,14 +69,20 @@ public class ProductServiceImp implements IProductService {
             updateProductDTO.setProductStock(productDTO.getProductStock());
             updateProductDTO.setProductCode(productDTO.getProductCode());
 
-            useRepository.save(ProductMapper.convertToEntity(updateProductDTO));
-            return "Entity updated";
+            return ProductMapper
+                    .convertToDTO(useRepository
+                            .save(ProductMapper
+                                    .convertToEntity(updateProductDTO)));
+
         }
 
-        return "Entity not updated";
+       else {
+
+           throw new RuntimeException("Product Not found");
+        }
     }
 
-    @Override
+
     public ProductDTO updateProductName(Long id, String productName) {
 
         Product product = useRepository.findById(id)
@@ -84,7 +93,7 @@ public class ProductServiceImp implements IProductService {
     }
 
 
-    @Override
+
     public ProductDTO updateProductPrice(Long id, Double productPrice) {
 
         Product product = useRepository.findById(id)
@@ -94,7 +103,7 @@ public class ProductServiceImp implements IProductService {
         return ProductMapper.convertToDTO(useRepository.save(product));
     }
 
-    @Override
+
     public ProductDTO updateProductStock(Long id, Integer productStock) {
 
         Product product = useRepository.findById(id)
@@ -104,7 +113,7 @@ public class ProductServiceImp implements IProductService {
         return ProductMapper.convertToDTO(useRepository.save(product));
     }
 
-    @Override
+
     public ProductDTO updateProductCode(Long id, String productCode) {
 
         Product product = useRepository.findById(id).
@@ -115,7 +124,7 @@ public class ProductServiceImp implements IProductService {
     }
 
 
-    @Override
+
     public String deleteProductById(Long id) {
 
         if (useRepository.existsById(id)) {
@@ -125,7 +134,7 @@ public class ProductServiceImp implements IProductService {
         return "Entity not deleted";
     }
 
-    @Override
+
     public String deleteAllProducts() {
 
         useRepository.deleteAll();

@@ -1,9 +1,8 @@
 package com.example.app_jeanstation.controller;
 
 import com.example.app_jeanstation.DTO.ProductDTO;
-import com.example.app_jeanstation.model.Product;
 
-import com.example.app_jeanstation.service.ProductServiceImp;
+import com.example.app_jeanstation.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    ProductServiceImp productService;
+    ProductService productService;
 
     @GetMapping("/getProduct/{id}")
     public ProductDTO display(@PathVariable Long id){
@@ -29,19 +28,19 @@ public class ProductController {
     }
 
     @PostMapping("/addProduct")
-    public String create(@RequestBody ProductDTO productDTO){
+    public ProductDTO create(@RequestBody ProductDTO productDTO){
 
         return productService.addProduct(productDTO);
     }
 
     @PostMapping("/addAllProducts")
-    public String createAll(@RequestBody List<ProductDTO> productDTOS){
+    public List<ProductDTO> createAll(@RequestBody List<ProductDTO> productDTOS){
 
         return productService.addAllProducts(productDTOS);
     }
 
     @PutMapping("/updateProduct/{id}")
-    public String update(@PathVariable Long id,
+    public ProductDTO update(@PathVariable Long id,
                          @RequestBody ProductDTO productDTO){
 
         return productService.updateProductById(id, productDTO);
