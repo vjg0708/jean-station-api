@@ -131,7 +131,7 @@ public class ProductService {
             useRepository.deleteById(id);
             return "Entity Deleted";
         }
-        return "Entity not deleted";
+        return "Entity not exists";
     }
 
 

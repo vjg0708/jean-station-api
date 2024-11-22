@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-		features = ("C:\\Users\\harrish.vijay\\eclipse-workspace\\jean-station-api\\app-jeanstation\\src\\test\\java\\com\\example\\app_jeanstation\\Features\\JeanStation.feature"),
+		features = ("C:\\Users\\david.doggala\\IdeaProjects\\jean-station-api\\app-jeanstation\\src\\test\\java\\com\\example\\app_jeanstation\\Features\\JeanStation.feature"),
 		glue = {"com.example.app_jeanstation.StepDefinition"},
 		plugin = {"pretty"},
 		monochrome = true 

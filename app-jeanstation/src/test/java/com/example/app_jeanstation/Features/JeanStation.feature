@@ -25,9 +25,6 @@ Feature: Product API Management
     When Patch the product details
 
 
-  Scenario: Delete the product details
-    Given Enter the delete request url
-    When Delete the product details
 
   Scenario: Placing the order
     Given Enter the placing order request url
@@ -43,3 +40,7 @@ Feature: Product API Management
   Scenario: Deleting the order
     Given Enter the delete order request url
     And Validate the order deletion
+
+  Scenario: Delete the product details
+    Given Enter the delete request url
+    When Delete the product details

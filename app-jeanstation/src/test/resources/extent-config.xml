@@ -1,0 +1,7 @@
+<configuration>
+    <theme>standard</theme>
+    <encoding>UTF-8</encoding>
+    <protocol>http</protocol>
+    <reportName>Spring Boot API Test Report</reportName>
+    <documentTitle>API Test Results</documentTitle>
+</configuration>
