@@ -50,6 +50,18 @@ public class ProductService {
 
     public List<ProductDTO> addAllProducts(List<ProductDTO> productsDTO) {
 
+        int exist = 0;
+        for (ProductDTO products : productsDTO){
+
+            if(useRepository.existsById(products.getId())){
+
+                exist += 1;
+            }
+        }
+
+        if (exist!=0){
+            throw new RuntimeException("Products already exists");
+        }
 
         return ProductMapper
                 .convertToDTOs(useRepository

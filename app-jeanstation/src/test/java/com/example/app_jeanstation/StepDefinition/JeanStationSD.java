@@ -30,22 +30,12 @@ public class JeanStationSD {
     private RequestSpecification patchRequest;
     private RequestSpecification deleteRequest;
 
-    private static ExtentReports extent;
-    private static ExtentTest test;
-    private static ExtentTest postTest;
-    private static ExtentTest getProductTest;
-    private static ExtentTest putTest;
-    private static ExtentTest patchTest;
-    private static ExtentTest deleteTest;
-    private static ExtentTest placeTest;
-    private static ExtentTest releaseTest;
-    private static ExtentTest deleteOrderTest;
 
 
     @Before
     public static void before_or_after_all() {
 
-        RestAssured.baseURI = "http://localhost:8080/api/jean-station";
+        RestAssured.baseURI = "http://localhost:8000/api/jean-station";
         baseRequest = RestAssured.given();
 
 
@@ -74,7 +64,7 @@ public class JeanStationSD {
     @When("Post the product details")
     public void post_the_product_details() {
         response = postRequest.post("/addProduct");
-        SharedContext.productid = response.jsonPath().getLong("id");
+        //SharedContext.productid = response.jsonPath().getLong("id");
     }
 
     @And("Validate the product name")
@@ -99,6 +89,7 @@ public class JeanStationSD {
 
     @When("Get the product details")
     public void get_the_product_details() {
+
         response = getRequest.get("/getProduct/1");
     }
 

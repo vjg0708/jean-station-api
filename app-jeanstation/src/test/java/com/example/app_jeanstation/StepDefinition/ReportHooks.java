@@ -15,7 +15,7 @@ public class ReportHooks {
     public void setExtentReports(){
 
         if (extentReports==null){
-            ExtentSparkReporter sparkReporter = new ExtentSparkReporter("C:\\Users\\david.doggala\\IdeaProjects\\jean-station-api\\app-jeanstation\\Extent_Reports.html");
+            ExtentSparkReporter sparkReporter = new ExtentSparkReporter("C:\\Users\\harrish.vijay\\eclipse-workspace\\jean-station-api\\app-jeanstation\\target\\Extent_Reports.html");
             sparkReporter.config().setReportName("Jean-Station Report");
             sparkReporter.config().setDocumentTitle("API Test");
 

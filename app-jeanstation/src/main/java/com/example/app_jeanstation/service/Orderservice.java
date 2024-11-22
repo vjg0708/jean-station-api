@@ -47,8 +47,8 @@ public class Orderservice {
 	public Order releaseOrder(Long id) {
 		Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
 		order.setStatus(Order.OrderStatus.RELEASED);
-
-		return order;
+		orderRepository.save(order);
+		return orderRepository.findById(order.getOrder_ID()).orElseThrow(()-> new RuntimeException("Order does not exist"));
 	}
 
 	public Order deleteFromCart(Long id) {
